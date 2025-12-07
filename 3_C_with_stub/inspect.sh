@@ -11,7 +11,7 @@ xtensa_lx106_elf_nm="$PATH_xtensa/xtensa-lx106-elf-nm"
 #"$xtensa_lx106_elf_readelf" -h $1
 
 # 2. Inspect section headers
-#"$xtensa_lx106_elf_readelf" -S $1
+"$xtensa_lx106_elf_readelf" -S $1
 
 # 3. Inspect program headers
 #"$xtensa_lx106_elf_readelf" -l $1
