@@ -2,14 +2,13 @@
 Simple ESP8266 bare-metal app to blink a led. <br />
 Runs raw without the espressif framework.
 
-Differences to 1_raw_C:             <br />
-- Linker script truncated           <br />
-- Assembly instead of C program
+Constitutes of:     <br />
+- Linker script     <br />
+- Assembly script
 
-Requires Xtensa toolchain.
+Build requires the Xtensa toolchain.
 
 # Highlights
-- Linker script generates a symbol for stackpointer address.        <br />
 - Stack control with prologue/epilogue to allow for nested calls.
 
 # Instructions
