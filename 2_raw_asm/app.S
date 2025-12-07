@@ -1,30 +1,11 @@
-    .section .text, "ax"
+.section .text, "ax"
 
     .align 4
     .global call_user_start
     .type   call_user_start, @function
 call_user_start:
-    // 1. Set stack pointer
-    .extern __stack
-    movi a1, __stack
 
-    // 2. Disable HW watchdog
-    // WDT_CTL @ 0x60000900, clear bit0
-    movi a2, 0x60000900
-    l32i a3, a2, 0
-    movi a4, 0xfffffffe
-    and a3, a3, a4
-    s32i a3, a2, 0
-
-    // 3. Disable SW watchdog
-    // RTC_WDT @ 0x60000700, clear bit31
-    movi a2, 0x60000700
-    l32i a3, a2, 0
-    movi a4, 0x7fffffff
-    and a3, a3, a4
-    s32i a3, a2, 0
-
-    // 4. Initialize GPIO
+    // Initialize GPIO
     // GPIO_ENABLE @ 0x60000310, set bit4
     movi a2, 0x60000310
     l32i a3, a2, 0
