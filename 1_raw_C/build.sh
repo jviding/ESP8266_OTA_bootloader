@@ -1,21 +1,59 @@
 #!/bin/bash
-
-# Set xtensa path
-PATH_xtensa="/home/jasu/.arduino15/packages/esp8266/tools"
-
-
-xtensa_lx106_elf_gcc="$PATH_xtensa/xtensa-lx106-elf-gcc/3.1.0-gcc10.3-e5f9fec/bin/xtensa-lx106-elf-gcc"
-
+# ESP8266 Bare-Metal Build Script
+# -------------------------------
+# Smallest possible build pipeline for ESP8266 bare-metal work:
+#   1. Compile C code into an object file
+#   2. Link it into an ELF using a custom linker script
+#   3. Convert the ELF into a flashable ESP8266 image using esptool.py
+#
 
 echo "Building..."
 
-echo "[1/3] Compile object file"
-"$xtensa_lx106_elf_gcc" -c app.c -o app.o
+echo "[1/4] Compile object file"
+#
+# -c : Compile only; do not link.
+#    Produces app.o containing:
+#       - machine code for each function
+#       - relocation entries describing how symbols must be fixed up at link time
+#
+xtensa-lx106-elf-gcc -c app.c -o app.o
 
-echo "[2/3] Compile simple elf"
-"$xtensa_lx106_elf_gcc" -nostdlib -Wl,-T,app.ld -Wl,-e,call_user_start app.o -o app.elf
+echo "[2/4] Link into a minimal ELF"
+#
+# -nostdlib
+#   Do NOT link against: libc, libgcc, or crt0.o / startupfiles
+#   NOTICE: There will be NO memory initialization logic!
+#
+# -Wl,-T,app.ld          
+#   Pass "-T app.ld" to the linker.
+#   This tells ld to use app.ld as the linker script.
+#
+# -Wl,-e,call_user_start 
+#   Pass "-e call_user_start" to the linker.
+#   This sets the ELF entry point to the symbol call_user_start.
+#   The ESP8266 bootloader jumps to this address after loading the image.
+# 
+xtensa-lx106-elf-gcc -nostdlib -Wl,-T,app.ld -Wl,-e,call_user_start app.o -o app.elf
 
-echo "[3/3] Clean up"
-rm app.o
+echo "[3/4] Convert ELF to ESP8266 flashable image"
+#
+# elf2image
+#   - Reads the ELF file
+#   - Extracts loadable segments (.text, .data)
+#   - Applies ESP8266 image header format
+#   - Writes a .bin file suitable for flasing
+#
+# The .bin file contains:
+#   - ESP8266 image header (entry point, flash mode, flash size)
+#   - Segment table
+#   - Checksums
+#
+esptool.py elf2image app.elf
+
+echo "[4/4] Clean up"
+#
+# Remove the intermediate files.
+#
+rm app.o app.elf
 
 echo "Build completed."
