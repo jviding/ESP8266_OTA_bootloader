@@ -10,10 +10,10 @@ Constitutes of: <br />
 Build requires the Xtensa LX106 toolchain (xtensa-lx106-elf-*).
 
 ## Build & Flash
-1) Build a flashable ESP8266 image:
+Build a flashable ESP8266 image:
 > \$ sh build.sh
 
-2) Flash the image over USB:
+Flash the image over USB:
 > \$ esptool.py --port /dev/ttyUSB0 --baud 115200 write_flash 0x00000 app.elf-0x00000.bin
 
 ## Inspect & Analyze
