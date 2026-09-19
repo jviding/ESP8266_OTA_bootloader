@@ -27,9 +27,9 @@ This bare-metal build places everything inside a single **.text** section:
 
 > .text {
 >
->   0x40100000-0x4010000c : Literal pool (4x 32-bit words)
->
->   0x40100010-0x40100091 : Xtensa machine instructions
+>>   0x40100000-0x4010000c : Literal pool (4x 32-bit words)
+>>
+>>   0x40100010-0x40100091 : Xtensa machine instructions
 >
 > }
 
