@@ -1,22 +1,34 @@
 # Raw C
-Simple ESP8266 bare-metal app to blink a led. <br />
-Runs raw without the espressif framework.
+Simple ESP8266 Bare-Metal LED Blink. <br />
+Runs without the espressif SDK or framework.
 
 Constitutes of: <br />
-- Linker script <br />
-- C program     <br />
-- Build commands
+- **Linker script** - defines memory layout and entry point <br />
+- **C source** - code to manipulate the GPIO registers      <br />
+- **Build script** - compiles, links, and produces a flashable image
 
-Build requires the Xtensa toolchain.
+Build requires the Xtensa LX106 toolchain (xtensa-lx106-elf-*).
 
-# Instructions
-1) Install Xtensa and set its path in build.sh. <br />
-2) Build generates app.elf.                     <br />
-\$ sh build.sh                                  <br />
-3) Add image headers:                           <br />
-\$ esptool.py elf2image app.elf                 <br />
-4) Flash:                                       <br />
-\$ esptool.py --port /dev/ttyUSB0 --baud 115200 write_flash 0x00000 app.elf-0x00000.bin
+# Build & Flash
+1) Build a flashable ESP8266 image:
+> \$ sh build.sh
 
-# Debugging
-Useful snippets in inspect.sh
+2) Flash the image over USB:
+> \$ esptool.py --port /dev/ttyUSB0 --baud 115200 write_flash 0x00000 app.elf-0x00000.bin
+
+# Inspect & Analyze
+Inspection tools are listed in **inspect.sh**.
+
+Example: disassemble the ELF:
+> \$ xtensa-lx106-elf-objdump -d app.elf
+
+## Section layout
+This bare-metal build places everything inside a single **.text** section:
+
+> .text {
+>   0x40100000-0x4010000c : Literal pool (4x 32-bit words)
+>   0x40100010-0x40100091 : Xtensa machine instructions
+> }
+
+The literal pool contains constants referenced by l32r instructions.
+The rest is the actual program code starting at call_user_start.
