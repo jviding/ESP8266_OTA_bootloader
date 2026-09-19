@@ -1,6 +1,7 @@
 #include <stdint.h>
 
 // Inline to avoid a new call frame and memory corruption
+// See build.sh -> there's no memory initialization logic
 static inline __attribute__((always_inline)) void wait() { 
     for (volatile uint32_t i = 0; i < 500000; ++i) {
         asm volatile ("nop");
