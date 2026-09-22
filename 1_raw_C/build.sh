@@ -1,15 +1,16 @@
 #!/bin/bash
 # ESP8266 Bare-Metal Build Script
-# -------------------------------
+# ----------------------------------------
 # Smallest possible build pipeline for ESP8266 bare-metal work:
 #   1. Compile C code into an object file
 #   2. Link it into an ELF using a custom linker script
-#   3. Convert the ELF into a flashable ESP8266 image using esptool.py
+#   3. Convert the ELF into a flashable ESP8266 image
+#   4. Flash the image to ESP8266 over USB
 #
 
-echo "Building..."
+echo "Build & Deploy"
 
-echo "[1/4] Compile object file"
+echo "[1/5] Compile object file"
 #
 # -c : Compile only; do not link.
 #    Produces app.o containing:
@@ -18,7 +19,7 @@ echo "[1/4] Compile object file"
 #
 xtensa-lx106-elf-gcc -c app.c -o app.o
 
-echo "[2/4] Link into a minimal ELF"
+echo "[2/5] Link into a minimal ELF"
 #
 # -nostdlib
 #   Do NOT link against: libc, libgcc, or crt0.o / startupfiles
@@ -35,7 +36,7 @@ echo "[2/4] Link into a minimal ELF"
 # 
 xtensa-lx106-elf-gcc -nostdlib -Wl,-T,app.ld -Wl,-e,call_user_start app.o -o app.elf
 
-echo "[3/4] Convert ELF to ESP8266 flashable image"
+echo "[3/5] Convert ELF to ESP8266 flashable image"
 #
 # elf2image
 #   - Reads the ELF file
@@ -50,10 +51,15 @@ echo "[3/4] Convert ELF to ESP8266 flashable image"
 #
 esptool.py elf2image app.elf
 
-echo "[4/4] Clean up"
+echo "[4/5] Flash the image to ESP8266"
 #
-# Remove the intermediate files.
+# Flash the image to address 0x00000
+# The ESP8266 ROM bootloader loads the first image from this address
 #
-rm app.o app.elf
+esptool.py --port /dev/ttyUSB0 --baud 115200 write_flash 0x00000 app.elf-0x00000.bin
 
-echo "Build completed."
+echo "[5/5] Clean up"
+# Remove the intermediate files.
+rm app.o app.elf app.elf-0x00000.bin
+
+echo "Done."
