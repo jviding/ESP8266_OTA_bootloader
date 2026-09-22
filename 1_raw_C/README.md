@@ -1,29 +1,29 @@
-# Raw C
-Simple ESP8266 Bare-Metal LED Blink. <br />
-Runs without the espressif SDK or framework.
+# ESP8266 Bare-Metal LED Blink
+No framework, no Espressif SDK.
+Just the raw machine instructions.
 
-Constitutes of: <br />
-- **Linker script** - defines memory layout and entry point <br />
+Constitutes of:                                             <br />
 - **C source** - code to manipulate the GPIO registers      <br />
-- **Build script** - compiles, links, and produces a flashable image
+- **Linker script** - defines memory layout and entry point <br />
+- **Build script** - compiles, links, and flashes an ESP8266 image
 
-Build requires the Xtensa LX106 toolchain (xtensa-lx106-elf-*).
+Requires:
+- **Xtensa LX106 toolchain** (xtensa-lx106-elf-*)
+- **esptool.py**
 
-## Build & Flash
-Build a flashable ESP8266 image:
+## Build & Delpoy
+Ensure Xtensa and esptool.py are set in PATH. <br />
+Ensure user belongs to dialout group (for /dev/ttyUSBX access).
+
 > \$ sh build.sh
 
-Flash the image over USB:
-> \$ esptool.py --port /dev/ttyUSB0 --baud 115200 write_flash 0x00000 app.elf-0x00000.bin
+See **inspect.sh** for tools to inspect the intermediate files.
 
-## Inspect & Analyze
-Inspection tools are listed in **inspect.sh**.
+For example, to disassemble the ELF:
 
-Example: disassemble the ELF
 > \$ xtensa-lx106-elf-objdump -d app.elf
 
-### Section layout
-This bare-metal build places everything inside a single **.text** section:
+We see the bare-metal build places everything inside a single **.text** section:
 
 > .text {
 >
