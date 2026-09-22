@@ -1,6 +1,5 @@
 # ESP8266 Bare-Metal LED Blink
-No framework, no Espressif SDK.
-Just the raw machine instructions.
+No framework, no Espressif SDK. Just the raw machine instructions.
 
 Constitutes of:                                             <br />
 - **C source** - code to manipulate the GPIO registers      <br />
@@ -17,13 +16,12 @@ Ensure user belongs to dialout group (for /dev/ttyUSBX access).
 
 > \$ sh build.sh
 
-See **inspect.sh** for tools to inspect the intermediate files.
-
-For example, to disassemble the ELF:
+See **inspect.sh** for tools to inspect the intermediate files. <br />
+For example, disassemble the ELF:
 
 > \$ xtensa-lx106-elf-objdump -d app.elf
 
-We see the bare-metal build places everything inside a single **.text** section:
+This bare-metal build places everything inside a single **.text** section:
 
 > .text {
 >
