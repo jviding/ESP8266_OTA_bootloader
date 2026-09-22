@@ -10,9 +10,12 @@ Requires:
 - **Xtensa LX106 toolchain** (xtensa-lx106-elf-*)
 - **esptool.py**
 
+Make the build tools available via PATH. <br />
+Add user in the dialout group, for /dev/ttyUSBx access.
+
+
 ## Build & Delpoy
-Ensure Xtensa and esptool.py are set in PATH. <br />
-Ensure user belongs to dialout group (for /dev/ttyUSBX access).
+Run the pipeline with:
 
 > \$ sh build.sh
 
