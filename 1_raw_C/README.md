@@ -11,7 +11,7 @@ Requires:
 - **esptool.py**
 
 Make the build tools available via PATH. <br />
-Add user in the dialout group, for /dev/ttyUSBx access.
+Add user in the dialout group, for */dev/ttyUSBx* access.
 
 
 ## Build & Delpoy
