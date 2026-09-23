@@ -4,10 +4,10 @@ ENTRY(call_user_start)
 
   This tells the linker to mark 'call_user_start' as the first
   instruction to be executed after the bootloader has finished
-  loading the .text and .data into IRAM/DRAM.
+  loading the program image.
 
-  The 'call_user_start' is then defined in our C program (app.c), as 
-  a function, and it's the true beginning of the bare-metal program.
+  'call_user_start' is defined in our C source (app.c), and 
+  it's the true beginning of the bare-metal program.
 */
 
 
@@ -16,15 +16,15 @@ MEMORY
   iram1_0_seg :   org = 0x40100000, len = 0x8000
 }
 /*
-  Defines a memory region where code will be placed.
+  Defines the program's memory region(s).
 
   iram1_0_seg:
     - 'org' is the origin address (start of IRAM region)
     - 'len' is the size of the region (32 KB here)
-    - This matches the ESP8266 IRAM mapping used by the ROM (bootloader)
+    - This matches the ESP8266 IRAM mapping used by the ROM
 
-  The ESP8266 executes code directly from IRAM, so the .text
-  section must be placed inside this region.
+  The ESP8266 will execute our code directly from IRAM, so 
+  we will place the .text section inside this region.
 */
 
 
@@ -37,10 +37,7 @@ PHDRS
 
   PT_LOAD tells the ROM bootloader that this segment must be loaded
   into memory before execution. The ESP8266 ROM bootloader reads
-  these headers to know which sections to copy into IRAM.
-
-  Without this, the ROM bootloader would not know where to place
-  the .text section.
+  these headers to know which sections to copy into IRAM/DRAM.
 */
 
 
