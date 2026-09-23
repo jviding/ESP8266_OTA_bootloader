@@ -64,7 +64,7 @@ arbitrary crash addresses.
 ... 	
 40100010 <wait>:                                        // *** Function: wait() ***
 ...
-40100032: 0f28     l32i.n	a2, a15, 0                    // Load current loop counter 'i'
+40100032: 0f28     l32i.n  a2, a15, 0                   // Load current loop counter 'i'
 40100034: fff331   l32r    a3, 40100000 <wait-0x10>     // Load literal from 0x40100000 into a3
 40100037: e6b327   bgeu    a3, a2, 40100021 <wait+0x11> // Branch if 500000 >= i
 4010003a: f03d     nop.n                                //   nop
