@@ -59,8 +59,8 @@ arbitrary crash addresses.
 
 ```
 40100000 <wait-0x10>:                                    // *** Literal pool ***
-40100000: 1f a1 07 00 	                                 // Value defined for the for-loop
-40100004: 10 03 00 60 	                                 // Value defined for GPIO
+40100000: 1f a1 07 00                                    // Value defined for the for-loop
+40100004: 10 03 00 60                                    // Value defined for GPIO
 ... 	
 40100010 <wait>:                                         // *** Function: wait() ***
 ...
