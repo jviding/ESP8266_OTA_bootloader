@@ -59,33 +59,33 @@ arbitrary crash addresses.
 
 ```
 40100000 <wait-0x10>:                                    // *** Literal pool ***
-40100000:	1f a1 07 00 	                                 // Value defined for the for-loop
-40100004:	10 03 00 60 	                                 // Value defined for GPIO
+40100000: 1f a1 07 00 	                                 // Value defined for the for-loop
+40100004: 10 03 00 60 	                                 // Value defined for GPIO
 ... 	
 40100010 <wait>:                                         // *** Function: wait() ***
 ...
-40100032:	0f28      l32i.n	a2, a15, 0                   // Load current loop counter 'i'
-40100034:	fff331    l32r	  a3, 40100000 <wait-0x10>     // Load literal from 0x40100000 into a3
-40100037:	e6b327    bgeu	  a3, a2, 40100021 <wait+0x11> // Branch if 500000 >= i
-4010003a:	f03d      nop.n                                //   nop
+40100032: 0f28      l32i.n	a2, a15, 0                   // Load current loop counter 'i'
+40100034: fff331    l32r	  a3, 40100000 <wait-0x10>     // Load literal from 0x40100000 into a3
+40100037: e6b327    bgeu	  a3, a2, 40100021 <wait+0x11> // Branch if 500000 >= i
+4010003a: f03d      nop.n                                //   nop
 ...
-40100043:	f00d      ret.n                                //   return
+40100043: f00d      ret.n                                //   return
 ...
 40100048 <call_user_start>:                              // *** Function: call_user_start() ***
 ...
-40100051:	ffec21    l32r	  a2, 40100004 <wait-0xc>      // Load literal from 0x40100004 into a2
-40100054:	0f29      s32i.n	a2, a15, 0                   // Store to RAM address [a15 + 0 bytes]
-40100056:	ffec21    l32r	  a2, 40100008 <wait-0x8>      // Load ...
-40100059:	1f29      s32i.n	a2, a15, 4                   // Store to RAM address [a15 + 4 bytes]
-4010005b:	ffec21    l32r	  a2, 4010000c <wait-0x4>      // Load ...
-4010005e:	2f29      s32i.n	a2, a15, 8                   // Store to RAM address [a15 + 8 bytes]
+40100051: ffec21    l32r	  a2, 40100004 <wait-0xc>      // Load literal from 0x40100004 into a2
+40100054: 0f29      s32i.n	a2, a15, 0                   // Store to RAM address [a15 + 0 bytes]
+40100056: ffec21    l32r	  a2, 40100008 <wait-0x8>      // Load ...
+40100059: 1f29      s32i.n	a2, a15, 4                   // Store to RAM address [a15 + 4 bytes]
+4010005b: ffec21    l32r	  a2, 4010000c <wait-0x4>      // Load ...
+4010005e: 2f29      s32i.n	a2, a15, 8                   // Store to RAM address [a15 + 8 bytes]
 ...
-4010007d:	fff905    call0	40100010 <wait>                // Call function wait()
-40100080:	1f28      l32i.n	a2, a15, 4                   // Load GPIO register address into a2
-40100082:	031c      movi.n	a3, 16                       // Load bitmask (1 << 4) into a3
-40100084:	0020c0    memw                                 //   sync
-40100087:	0239      s32i.n	a3, a2, 0                    // Write bitmask to register address [a2]
-40100089:	fff845    call0	40100010 <wait>                // Call function wait()
+4010007d: fff905    call0	40100010 <wait>                // Call function wait()
+40100080: 1f28      l32i.n	a2, a15, 4                   // Load GPIO register address into a2
+40100082: 031c      movi.n	a3, 16                       // Load bitmask (1 << 4) into a3
+40100084: 0020c0    memw                                 //   sync
+40100087: 0239      s32i.n	a3, a2, 0                    // Write bitmask to register address [a2]
+40100089: fff845    call0	40100010 <wait>                // Call function wait()
 ...
 ```
 
