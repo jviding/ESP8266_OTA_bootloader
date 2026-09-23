@@ -41,12 +41,14 @@ Idx Name   Size      VMA       LMA       File off  Algn
            CONTENTS, ALLOC, LOAD, READONLY, CODE
 ```
 
+Read as:
+
 Section contains actual data (CONTENTS), memory must be allocated on the target device (ALLOC), 
 and this section be physically written there (LOAD). This region cannot be written to at 
 runtime (READONLY) and it contains CPU machine instructions (CODE) rather than passive data. 
 
-The *.text* section is 0x8F bytes, and VMA=LMA means the program is executed directly from 
-where it's loaded (IRAM region).
+So, our linker script placed our program in this *.text* section, the program is 0x8F bytes, 
+and VMA=LMA means it's executed directly from where it's loaded (IRAM region).
 
 ### Disassemble
 Command:
@@ -88,7 +90,9 @@ Outputs:
 ...
 ```
 
-
+### Symbol Table
+Command:
+> xtensa-lx106-elf-nm app.elf
 
 
 
