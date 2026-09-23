@@ -17,13 +17,13 @@ Ensure the build tools are available via env (PATH). <br />
 Add user in the *dialout* group, for */dev/ttyUSBx* access.
 
 ## Project structure
-Constitutes of:
-\- **C source** - code to manipulate the GPIO registers
-\- **Linker script** - defines memory layout and entry point
+Constitutes of:                                                       <br />
+\- **C source** - code to manipulate the GPIO registers               <br />
+\- **Linker script** - defines memory layout and entry point          <br />
 \- **Build script** - compiles, links, and flashes the ESP8266 image
 
-Requires:
-\- Xtensa LX106 toolchain (xtensa-lx106-elf-*)
+Requires:                                       <br />
+\- Xtensa LX106 toolchain (xtensa-lx106-elf-*)  <br />
 \- esptool.py
 
 
