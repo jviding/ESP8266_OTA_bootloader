@@ -18,13 +18,13 @@ Add user in the *dialout* group, for */dev/ttyUSBx* access.
 
 ## Project structure
 Constitutes of:
-- **C source** - code to manipulate the GPIO registers
-- **Linker script** - defines memory layout and entry point
-- **Build script** - compiles, links, and flashes the ESP8266 image
+\- **C source** - code to manipulate the GPIO registers
+\- **Linker script** - defines memory layout and entry point
+\- **Build script** - compiles, links, and flashes the ESP8266 image
 
 Requires:
-- **Xtensa LX106 toolchain** (xtensa-lx106-elf-*)
-- **esptool.py**
+\- Xtensa LX106 toolchain (xtensa-lx106-elf-*)
+\- esptool.py
 
 
 ## Inspect & Analyze
@@ -38,8 +38,8 @@ We can see the .text section is 0x8F bytes, and VMA=LMA means the <br />
 program is executed directly from where it's loaded (IRAM region).
 
 ```
-Idx Name   Size      VMA       LMA       File off  Algn  <br />
-  0 .text  0000008f  40100000  40100000  00001000  2**2  <br />
+Idx Name   Size      VMA       LMA       File off  Algn
+  0 .text  0000008f  40100000  40100000  00001000  2**2
            CONTENTS, ALLOC, LOAD, READONLY, CODE
 ```
 
