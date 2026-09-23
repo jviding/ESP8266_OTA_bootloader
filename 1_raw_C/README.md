@@ -1,11 +1,11 @@
 # ESP8266 Bare-Metal LED Blink
-This project explores bare-metal programming on the ESP8266 without high-level
-frameworks or SDK abstractions. It features a minimal LED blink implementation
-written in C, a custom linker script defining memory layout, and a lightweight
+This project explores bare-metal programming on the ESP8266 without high-level <br />
+frameworks or SDK abstractions. It features a minimal LED blink implementation <br />
+written in C, a custom linker script defining memory layout, and a lightweight <br />
 build pipeline.
 
-Beyond blinking an LED, this project serves as a practical guide to inspecting, 
-disassembling, and analyzing ELF executables and raw binary files to understand 
+Beyond blinking an LED, this project serves as a practical guide to inspecting, <br />
+disassembling, and analyzing ELF executables and raw binary files to understand <br />
 how a program translates directly onto the Xtensa architecture.
 
 
