@@ -31,12 +31,24 @@ Requires:
 See **inspect.sh** for inspection tools. <br />
 
 
-**xtensa-lx106-elf-objdump -h app.elf** (Section Headers)   <br />
+**Section Headers** <br />
+> xtensa-lx106-elf-objdump -h app.elf
+
+We can see the .text section is 0x8F bytes, and VMA=LMA means the <br />
+program is executed directly from where it's loaded (IRAM region).
+
+```
+Idx Name   Size      VMA       LMA       File off  Algn  <br />
+  0 .text  0000008f  40100000  40100000  00001000  2**2  <br />
+           CONTENTS, ALLOC, LOAD, READONLY, CODE
+```
+
+Section contains actual data (CONTENTS), memory must be allocated on the    <br />
+target device (ALLOC), and this section be physically written there (LOAD). <br />
+This region cannot be written to at runtime (READONLY) and it contains CPU  <br />
+machine instructions (CODE) rather than passive data. 
 
 
-Idx Name          Size      VMA       LMA       File off  Algn
-  0 .text         0000008f  40100000  40100000  00001000  2**2
-                  CONTENTS, ALLOC, LOAD, READONLY, CODE
 
 
 
