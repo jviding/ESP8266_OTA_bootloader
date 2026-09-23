@@ -23,16 +23,16 @@ void wait() {
     }
 }
 
-// Entry point, as defined in the linker script
 /*
-    The ESP8266 ROM bootloader loads this program from flash and then
-    jumps to the address specified as the ELF entry point.
+    The ESP8266 ROM bootloader loads this program and then jumps to the 
+    address specified as the ELF entry point. The load instructions and 
+    the ELF entry point are defined in our linker script (app.ld).
 
-    Our linker script (app.ld) sets:
-        ENTRY(call_user_start)
+    Our linker script sets:
+        ENTRY(call_user_start)               
 
     This makes 'call_user_start' the first function executed after the
-    bootloader finishes loading the image into IRAM/DRAM.
+    ROM bootloader has finished loading.
     
     Important details:
         - The ROM bootloader sets up a valid stack pointer.
@@ -45,8 +45,6 @@ void wait() {
         - No SDK
         - No runtime initialization
         - Only direct hardware register access
-
-    'call_user_start' is the true beginning of the program.
 */
 void call_user_start(void) {
     /*
