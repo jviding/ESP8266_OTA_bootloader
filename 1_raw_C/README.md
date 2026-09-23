@@ -1,12 +1,11 @@
 # ESP8266 Bare-Metal LED Blink
-This project explores bare-metal programming on the ESP8266 without high-level <br />
-frameworks or SDK abstractions. It features a minimal LED blink implementation <br />
-written in C, a custom linker script defining memory layout, and a lightweight <br />
-build pipeline.
+This project explores bare-metal programming on the ESP8266 without high-level frameworks 
+or SDK abstractions. It features a minimal LED blink implementation written in C, a custom 
+linker script defining memory layout, and a lightweight build pipeline.
 
-Beyond blinking an LED, this project serves as a practical guide to inspecting, <br />
-disassembling, and analyzing ELF executables and raw binary files to understand <br />
-how a program translates directly onto the Xtensa architecture.
+Beyond blinking an LED, this project serves as a practical guide to inspecting, disassembling, 
+and analyzing ELF executables and raw binary files to understand how a program translates 
+directly onto the Xtensa architecture.
 
 
 ## Build & Deploy
@@ -35,28 +34,28 @@ See **inspect.sh** for inspection tools. <br />
 Command:
 > xtensa-lx106-elf-objdump -h app.elf
 
-We can see the .text section is 0x8F bytes, and VMA=LMA means the <br />
-program is executed directly from where it's loaded (IRAM region).
-
+Outputs:
 ```
 Idx Name   Size      VMA       LMA       File off  Algn
   0 .text  0000008f  40100000  40100000  00001000  2**2
            CONTENTS, ALLOC, LOAD, READONLY, CODE
 ```
 
-Section contains actual data (CONTENTS), memory must be allocated on the    <br />
-target device (ALLOC), and this section be physically written there (LOAD). <br />
-This region cannot be written to at runtime (READONLY) and it contains CPU  <br />
-machine instructions (CODE) rather than passive data. 
+Section contains actual data (CONTENTS), memory must be allocated on the target device (ALLOC), 
+and this section be physically written there (LOAD). This region cannot be written to at 
+runtime (READONLY) and it contains CPU machine instructions (CODE) rather than passive data. 
+
+The *.text* section is 0x8F bytes, and VMA=LMA means the program is executed directly from 
+where it's loaded (IRAM region).
 
 ### Disassemble
 Command:
 > xtensa-lx106-elf-objdump -d app.elf
 
-This translates machine code back into Xtensa LX106 assembly instructions <br />
-and allows us to verify section placement, check literal pools, and debug <br />
-arbitrary crash addresses.
+Translates machine code back into Xtensa LX106 assembly instructions and allows us to 
+verify section placement, check literal pools, and debug arbitrary crash addresses.
 
+Outputs:
 ```
 40100000 <wait-0x10>:                                   // *** Literal pool ***
 40100000: 1f a1 07 00                                   // Value defined for the for-loop
