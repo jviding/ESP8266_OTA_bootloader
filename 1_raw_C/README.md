@@ -29,7 +29,6 @@ Requires:                                       <br />
 ## Inspect & Analyze
 See **inspect.sh** for inspection tools. <br />
 
-
 ### Section Headers
 Command:
 > xtensa-lx106-elf-objdump -h app.elf
@@ -94,23 +93,41 @@ Outputs:
 Command:
 > xtensa-lx106-elf-nm app.elf
 
+Outputs:
+```
+40100048 T call_user_start
+40100010 T wait
+```
 
+**T/t**: Text section symbol (function in code section). As we see in the disassembled code, 
+above, these are the addresses of our two functions in the program.
 
-For example, to disassemble the ELF:
+### ELF File Structure Details
+Command:
+> xtensa-lx106-elf-readelf -h app.elf
 
-> \$ xtensa-lx106-elf-objdump -d app.elf
+Outputs the **ELF File Header**, displaying such as architecture target, endianness (Little-Endian 
+for Xtensa), and the entry point address (here it would be 0x40100048 for call_user_start).
 
-Everything is placed inside a single **.text** section, where:
+Command:
+> xtensa-lx106-elf-readelf -l app.elf
 
-> 0x40100000-0x4010000c : Literal pool (4x 32-bit words)                            <br />
-> 0x40100010-0x40100045 : Function wait()            // Xtensa machine instructions <br />
-> 0x40100048-0x40100091 : Function call_user_start() // Xtensa machine instructions
+Outputs **Program Headers / Segments**, displaying how sections are grouped into LOAD segments
+by the linker for flashing onto hardware. This is essential for bare-metal flash tools
+(esptool.py), which parse segments rather than raw sections.
 
-Literal pool contains the constants referenced by l32r instructions.
+### Notice
+Sections divide the binary logically based on content type (*.text* for code, *.data* for 
+initialized variables, *.bss* for uninitialized data). But a loader or hardware flasher doesn't 
+care about individual sections or function names - it only needs to know where to copy chunks of 
+bytes in memory at runtime. To make loading efficient, the linker groups multiple **Sections** 
+with similar permissions (e.g., combining *.text* and *.literal* into one executable block) into
+a single **Segment**.
 
-The literal pool contains constants referenced by l32r instructions.
-Because these are in peripheral MMIO space, not in RAM, they work without initialization.
-In simple terms, they don't depend on .data, .bss, stack, or interrupts.
+**objdump -h** (The Linking View: Sections) - Displays the section header table, which tells
+the exact size and VMA (Virtual Memory Address) / LMA (Load Memory Address) of individual sections.
+These sections have flags like CONTENTS, ALLOC, LOAD, READONLY, and CODE.
 
-The literal pool contains constants referenced by l32r instructions. <br />
-The rest is the actual program code starting at call_user_start.
+**readelf -l** (The Execution View: Segments) - Displays the program headers, which shows the
+LOAD segments (continuous blocks of data to be copied from the binary file into RAM) and the
+Section-to-Segment Mapping (which sections got packaged into which loadable segment).
