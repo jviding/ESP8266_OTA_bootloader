@@ -1,3 +1,8 @@
+/* 
+  This linker script is explained in:
+  ../1_ELF_files/app.ld
+*/
+
 ENTRY(call_user_start)
 
 MEMORY
