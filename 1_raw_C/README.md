@@ -27,7 +27,7 @@ Requires:                                       <br />
 
 
 ## Inspect & Analyze
-See **inspect.sh** for inspection tools. <br />
+See *inspect.sh* for selected inspection tools.
 
 ### Section Headers
 Command:
