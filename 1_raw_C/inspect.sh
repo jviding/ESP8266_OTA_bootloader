@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Call with:
+# > sh inspect.sh <filename>
+
 ## READELF
 
 # 1. Inspect ELF header
@@ -12,7 +15,7 @@ xtensa-lx106-elf-readelf -S $1
 xtensa-lx106-elf-readelf -l $1
 
 # 4. Inspect symbol table
-xtensa-lx106-elf-readelf -s $1 #| grep 'call_user_start'
+xtensa-lx106-elf-readelf -s $1
 
 
 ## NM
@@ -27,8 +30,11 @@ xtensa-lx106-elf-nm $1 #| grep 'call_user_start'
 # 1. Inspect sections layout
 xtensa-lx106-elf-objdump -h $1
 
-# 2. Disassemble all sections
+# 2. Disassemble
+xtensa-lx106-elf-objdump -d $1
+
+# 3. Disassemble all sections
 xtensa-lx106-elf-objdump -h $1 -d $1 | less
 
-# 3. Display full contents of specific section
+# 4. Display sections contents
 xtensa-lx106-elf-objdump -h $1 -s $1
