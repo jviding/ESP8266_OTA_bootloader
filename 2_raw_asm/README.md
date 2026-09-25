@@ -76,18 +76,28 @@ attempts to decode raw 32-bit address pointers as instruction opcodes:
 ```
 Disassembly of section .literal:
 
-40100000 <.literal>:                # Explicit .literal section
+40100000 <.literal>:                 # Explicit .literal section
 40100000: 00    .byte 00
-40100001: 80    .byte 0x80
+40100001: 80    .byte 0x80           # Disassembled as instruction
 40100002: fe    .byte 0xfe
 ...
 
-Disassembly of section .text:       # Followed by .text section
+Disassembly of section .text:        # Followed by .text section
 
 40100010 <wait>:
-40100010: e0c112    addi a1, a1, -32
+40100010: e0c112  addi a1, a1, -32   # Disassembled as instruction
 ...
 ```
+
+Even with a standalone *.literal* section, inspection utilities like *objdump* still
+attempt to decode these data words as executable opcodes. This occurs because the
+*l32r* instruction fetches data directly over the CPU's Instruction Fetch Bus (IBUS),
+bypassing the standard Load/Store Unit on the Data Bus (DBUS). Because *.literal*
+sections must be IBUS-accessible, the Xtensa assembler (*as*) automatically tags them
+with the *CODE* (*SHF_EXECINSTR*) attribute. Without *.xt.lit* metadata to dealienate
+literal boundaries, *objdump* relies solely on this *CODE* flag and disassembles the
+entire section as instructions.
+
 
 
 
@@ -137,9 +147,4 @@ When needed? Why?
 
 What is ill?
 40100045:	000000        	ill
-
-
-
-
-
 
