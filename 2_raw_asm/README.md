@@ -16,7 +16,7 @@ to the Xtensa Call0 ABI to prevent nested *call0* instructions from clobbering t
 return address register (*a0*).
 
 
-# Implicit Sectioning
+## Implicit Sectioning
 In our previous project, the linked ELF used an inline *.literal* pool because our 
 linker script merged **(.literal)* directly inside the *.text* output section. In 
 larger codebases, scattering literal pools inline throughout *.text* ensures that
@@ -53,7 +53,7 @@ Disassembly of section .text:
 ...
 ```
 
-# Explicit Sectioning
+## Explicit Sectioning
 In this project, we write our constants (data words) to the *.rodata* output 
 section, mapped directly to Flash via the read-only DRAM bus alias (0x3ffe8000).
 We then store 32-bit Flash pointers to those constants in a standalone *.literal*
@@ -101,13 +101,13 @@ entire section as instructions.
 
 
 
-# asm
+## asm
 
 Loading with l32i and l32r and what's the .n
 
 
 
-# Prologue
+## Prologue
 Function prologue prepares the call stack whenever a function is called (*call0*) so 
 that it can safely store local variables, call sub-functions without losing track of 
 where to return, and restore the CPU state when finished.
@@ -139,7 +139,7 @@ function to reliably reference local variables and parameters.
 
 
 
-# Epilogue
+## Epilogue
 How works?
 
 Explain memw
