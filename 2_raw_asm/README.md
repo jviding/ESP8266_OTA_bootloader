@@ -11,9 +11,7 @@ Beyond those changes, this project provides practical insight into bare-metal me
 mapping and call stack management on Xtensa LX106. Our linker script now segregates
 output into *.text* (IRAM execution), *.literal* (IRAM pointer pool), and *.rodata*
 (DRAM constants). Additionally, we implemented explicit stack frame prologues and
-epilogues in assembly to manage caller/callee-saved registers manually, adhering
-to the Xtensa Call0 ABI to prevent nested *call0* instructions from clobbering the
-return address register (*a0*).
+epilogues in assembly to manage caller/callee-saved registers manually.
 
 
 ## Implicit Sectioning
@@ -53,6 +51,7 @@ Disassembly of section .text:
 ...
 ```
 
+
 ## Explicit Sectioning
 In this project, we write our constants (data words) to the *.rodata* output 
 section, mapped directly to Flash via the read-only DRAM bus alias (0x3ffe8000).
@@ -89,22 +88,85 @@ Disassembly of section .text:        # Followed by .text section
 ...
 ```
 
-Even with a standalone *.literal* section, inspection utilities like *objdump* still
-attempt to decode these data words as executable opcodes. This occurs because the
-*l32r* instruction fetches data directly over the CPU's Instruction Fetch Bus (IBUS),
-bypassing the standard Load/Store Unit on the Data Bus (DBUS). Because *.literal*
-sections must be IBUS-accessible, the Xtensa assembler (*as*) automatically tags them
-with the *CODE* (*SHF_EXECINSTR*) attribute. Without *.xt.lit* metadata to dealienate
-literal boundaries, *objdump* relies solely on this *CODE* flag and disassembles the
-entire section as instructions.
+So, even with a standalone *.literal* section, *objdump* still attempts to decode
+the data words as executable opcodes. This occurs because without *.xt.lit*
+metadata to delineate the literal boundaries, *objdump* relies solely on the 
+*CODE* attribute the Xtensa assembler tagged the *.literal* section with.
+
+The Xtensa assembler (*as*) automatically tags *.literal* sections with the *CODE*
+(*SHF_EXECINSTR*) attribute because *.literal* sections must be IBUS-accessible.
+This is due to the *l32r* instruction, which fetches data directly over the CPU's
+Instruction Fetch Bus (IBUS), bypassing the standard Load/Store Unit on the Data
+Bus (DBUS).
 
 
+## IBUS (l32r) vs. DBUS (l32i)
+The Xtensa LX106 CPU core follows a Harvard Architecture, where instruction
+fetching and data access are handled by physically separate memory pathways.
+
+**Instruction Memory Interface (IBUS)**: Connects the core's Instruction Fetch
+Unit exclusively to executable memory regions, such as IRAM (0x40100000) and 
+mapped IROM (0x40200000).
+
+**Data Memory Interface (DBUS)**: Connects the core's Load/Store Unit to data 
+memory regions, such as DRAM (0x3FFE8000 Flash alias) and peripheral MMIO 
+registers (0x60000000).
+
+Standard data load instructions like *l32i* route through the Load/Store Unit
+over the DBUS. Conversely, *l32r* calculates its target address relative to the
+Program Counter (*PC*) and fetches data directly through the IBUS - even though
+it is loading a data word from a literal pool rather than executing an opcode.
+
+Because *l32r* reads through the IBUS, the target *.literal* pool must reside 
+in IBUS-accessible memory (such as IRAM at *0x40100000*) and adhere to strict 
+32-bit word alignment. Furthermore, *l32r* has a maximum PC-relative reach 
+limit of 256 KB, requiring literal pools to be placed within range of the 
+calling code.
 
 
-## asm
+### l32r example
+The *l32r* (Load 32-bit PC-relative) instruction calculates its target address
+by adding a negative 18-bit word offset to the current Program Counter (PC).
+> Target Address = (PC + 3) - (Offset x 4)
 
-Loading with l32i and l32r and what's the .n
+For an example, in our disassembled ELF, we have an *l32r* instruction located 
+in address *0x40100034*:
+```
+40100000 <.literal>:
+40100000:	00 80 fe 3f   # 0x3FFE8000
+...
+40100010 <wait>:
+...
+40100034:	fff331  l32r a3, 40100000 <wait-0x10>
+...
+```
 
+1. **Calculate base PC**: The length of a standard 24-bit Xtensa instruction is 3 bytes,
+which is added to locate the end of the current instruction (the start of the next):
+> PC + 3 = 0x40100037
+
+2. **Force 32-bit alignment**: The CPU core masks off the lowest 2 bits (~0x3) to align
+to a 4-byte boundary:
+> Aligned base = 0x40100037 & ~ 0x3 = 0x40100034
+
+3. **Decode offset**: In the 24-bit opcode *0xFFF331*, the assembler encoded a 16-bit
+word offset of 0xFFF3 (which, as a 16-bit signed integer, equals -13). Converted to bytes:
+> Offset x 4 = 13 x 4 = 52 bytes (0x34)
+
+```
+24-bit Instruction: 0x31F3FF (Little-Endian of 0xFFF331)
+Binary:             0011 0001 1111 0011 1111 1111
+
+[ Bits 23:8 ] 16-bit Offset Field  : 0xFFF3  (1111 1111 1111 0011)
+[ Bits  7:4 ] Target Register (t)  : 0x1     (0001 -> Register a3)
+[ Bits  3:0 ] Opcode Identifier    : 0x1     (0001 -> RI16 Format / L32R)
+```
+
+4. **Compute final target address**:
+> Target address = (PC + 3) - (Offset x 4) = 0x40100034 - 0x34 = 0x40100000
+
+So, the *l32r* instruction fetches the 32-bit value stored at 0x40100000 (that is within
+the 256 KB PC-relative reach) via IBUS and stores that in register *a3*.
 
 
 ## Prologue
