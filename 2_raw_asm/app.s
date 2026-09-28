@@ -32,38 +32,38 @@
 wait:
     # PROLOGUE: Stack Frame Setup
     addi    a1,  a1, -32                # Reserve 32 bytes on stack frame
-    s32i.n  a15, a1,  28                # Save caller's frame pointer (return address)
-    mov.n   a15, a1                     # Set a15 as local frame pointer
+    s32i    a15, a1,  28                # Save caller's frame pointer (return address)
+    mov     a15, a1                     # Set a15 as local frame pointer
 
     # uint32_t i = 0
-    movi.n  a2, 0                       # Load the immediate integer value 0 into a2
+    movi    a2, 0                       # Load the immediate integer value 0 into a2
     memw                                #  sync
-    s32i.n  a2, a15, 0                  # Store i at [a15 + 0]
+    s32i    a2, a15, 0                  # Store i at [a15 + 0]
     j       .L_wait_loop_check
 
 .L_wait_loop_body:
     # asm volatile ("nop");
-    nop.n
+    nop
 
     # ++i 
     memw
-    l32i.n  a2, a15, 0                  # Read i from stack
-    addi.n  a2, a2,  1                  # Increment i++
+    l32i    a2, a15, 0                  # Read i from stack
+    addi    a2, a2,  1                  # Increment i++
     memw
-    s32i.n  a2, a15, 0                  # Write i back to stack (volatile)
+    s32i    a2, a15, 0                  # Write i back to stack (volatile)
 
 .L_wait_loop_check:
     memw
-    l32i.n  a2, a15, 0                  # Read i from stack
+    l32i    a2, a15, 0                  # Read i from stack
     l32r    a3, .L_DELAY_COUNT_ADDR     # Load Counter address into a3
     l32i    a4, a3,  0                  # Load Counter value from [a3]
     bgeu    a4, a2, .L_wait_loop_body   # If 500000 >= i, loop again
 
     # EPILOGUE: Stack Frame Cleanup & Return
-    mov.n   a1,  a15                    # Restore stack pointer
-    l32i.n  a15, a1, 28                 # Restore caller's frame pointer
+    mov     a1,  a15                    # Restore stack pointer
+    l32i    a15, a1, 28                 # Restore caller's frame pointer
     addi    a1,  a1, 32                 # Release reserved stack space
-    ret.n                               # Return to caller
+    ret                                 # Return to caller
 
 
 # ==============================
@@ -76,48 +76,48 @@ wait:
 call_user_start:
     # PROLOGUE: Stack Frame Setup
     addi    a1,  a1, -32
-    s32i.n  a0,  a1,  28
-    s32i.n  a15, a1,  24
-    mov.n   a15, a1
+    s32i    a0,  a1,  28
+    s32i    a15, a1,  24
+    mov     a15, a1
 
     # Load GPIO register addresses onto local stack frame
     l32r    a2, .L_GPIO_ENABLE_ADDR
     l32i    a3, a2,  0
-    s32i.n  a3, a15, 0                  # [a15 + 0] = GPIO_ENABLE
+    s32i    a3, a15, 0                  # [a15 + 0] = GPIO_ENABLE
 
     l32r    a2, .L_GPIO_OUT_SET_ADDR
     l32i    a3, a2,  0
-    s32i.n  a3, a15, 4                  # [a15 + 4] = GPIO_OUT_SET
+    s32i    a3, a15, 4                  # [a15 + 4] = GPIO_OUT_SET
 
     l32r    a2, .L_GPIO_OUT_CLEAR_ADDR
     l32i    a3, a2,  0
-    s32i.n  a3, a15, 8                  # [a15 + 8] = GPIO_OUT_CLEAR
+    s32i    a3, a15, 8                  # [a15 + 8] = GPIO_OUT_CLEAR
 
     # *GPIO_ENABLE |= (1 << 4);
-    l32i.n  a2, a15, 0                  # Load GPIO_ENABLE address
+    l32i    a2, a15, 0                  # Load GPIO_ENABLE address
     memw
-    l32i.n  a3, a2,  0                  # Read current register value
-    movi.n  a2, 16                      # Bit 4 mask (1 << 4 = 16) 
+    l32i    a3, a2,  0                  # Read current register value
+    movi    a2, 16                      # Bit 4 mask (1 << 4 = 16) 
     or      a3, a3,  a2                 # Set bit 4
-    l32i.n  a2, a15, 0
+    l32i    a2, a15, 0
     memw
-    s32i.n  a3, a2, 0                   # Write to GPIO_ENABLE
+    s32i    a3, a2, 0                   # Write to GPIO_ENABLE
 
 .L_main_loop:
     # *GPIO_OUT_CLEAR = (1 << 4);
-    l32i.n  a2, a15, 8                  # Load GPIO_OUT_CLEAR address
-    movi.n  a3, 16                      # Bitmask (1 << 4)
+    l32i    a2, a15, 8                  # Load GPIO_OUT_CLEAR address
+    movi    a3, 16                      # Bitmask (1 << 4)
     memw
-    s32i.n  a3, a2,  0                  # Write to GPIO_OUT_CLEAR
+    s32i    a3, a2,  0                  # Write to GPIO_OUT_CLEAR
 
     # wait();
     call0   wait
 
     # *GPIO_OUT_SET = (1 << 4);
-    l32i.n  a2, a15, 4                  # Load GPIO_OUT_SET
-    movi.n  a3, 16                      # Bitmask (1 << 4)
+    l32i    a2, a15, 4                  # Load GPIO_OUT_SET
+    movi    a3, 16                      # Bitmask (1 << 4)
     memw
-    s32i.n  a3, a2,  0                  # Write to GPIO_OUT_SET
+    s32i    a3, a2,  0                  # Write to GPIO_OUT_SET
 
     # wait();
     call0   wait
