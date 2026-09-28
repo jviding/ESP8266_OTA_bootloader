@@ -32,7 +32,8 @@
 wait:
     # PROLOGUE: Stack Frame Setup
     addi    a1,  a1, -32                # Reserve 32 bytes on stack frame
-    s32i    a15, a1,  28                # Save caller's frame pointer (return address)
+    s32i    a0,  a1,  28                # Save return address to caller's code
+    s32i    a15, a1,  24                # Save caller's frame pointer
     mov     a15, a1                     # Set a15 as local frame pointer
 
     # uint32_t i = 0
@@ -61,7 +62,8 @@ wait:
 
     # EPILOGUE: Stack Frame Cleanup & Return
     mov     a1,  a15                    # Restore stack pointer
-    l32i    a15, a1, 28                 # Restore caller's frame pointer
+    l32i    a0,  a1, 28                 # Restore return address
+    l32i    a15, a1, 24                 # Restore caller's frame pointer
     addi    a1,  a1, 32                 # Release reserved stack space
     ret                                 # Return to caller
 
