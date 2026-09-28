@@ -175,38 +175,74 @@ that it can safely store local variables, call sub-functions without losing trac
 where to return, and restore the CPU state when finished.
 
 ```
-    addi    a1,  a1, -32        // 1. a1 = a1 - 32
-    s32i.n  a0,  a1,  28        // 2. Write value in a0 to address [a1 + 28]
-    s32i.n  a15, a1,  24        // 3. Write value in a15 to address [a1 + 24]
-    mov.n   a15, a1             // 4. Move value in a1 to a15 
+    addi    a1,  a1, -32        # 1. a1 = a1 - 32
+    s32i    a0,  a1,  28        # 2. Write value in a0 to address [a1 + 28]
+    s32i    a15, a1,  24        # 3. Write value in a15 to address [a1 + 24]
+    mov     a15, a1             # 4. Move value in a1 to a15 
 ```
-**1.** In the Xtensa ABI (Application Binary Interface), **a1** is the dedicated Stack
+1. In the Xtensa ABI (Application Binary Interface), **a1** is the dedicated Stack
 Pointer (SP). Because the stack grows *downward* (from high memory addresses to low 
 memory addresses), substracting 32 bytes allocates a private 32-byte region on RAM for 
 this function's temporary use.
 
-**2.** Register **a0** holds the Return Address (where CPU needs to jump back to after
+2. Register **a0** holds the Return Address (where CPU needs to jump back to after
 finishing this function). If this function calls another function, a0 will be 
 overwritten. Saving a0 onto the stack at offset 28 ensures the function can safely
 make nested calls without forgetting where to return.
 
-**3.** Register **a15** acts as the Frame Pointer (FP). Since the current function is
+3. Register **a15** acts as the Frame Pointer (FP). Since the current function is
 about to change a15 to point to its own stack frame, it must first back up the
 caller's frame pointer at offset 24 so it can be restored when returning.
 
-**4.** Establish **a15** as the fixed base address (Frame Pointer) for the current
+4. Establish **a15** as the fixed base address (Frame Pointer) for the current
 call. Even if the stack pointer (a1) moves dynamically later (e.g., allocating
-variable-length arrays via *alloca()*), a15 stays fixed, allowing the debugger or
-function to reliably reference local variables and parameters.
-
+variable-length arrays via *alloca()*), a15 stays fixed, allowing the debugger
+or function to reliably reference local variables and parameters.
 
 
 ## Epilogue
-How works?
+Function epilogue tears down the stack frame before returning to the caller. It
+restores saved CPU registers (*a0* and *a15*) to their original state and releases
+the allocated stack memory so execution can resume seamlessly in the calling function.
+```
+    mov     a1,  a15            # 1. Move value in a15 to a1
+    l32i    a0,  a1, 28         # 2. Read value in address [a1 + 28] to a15
+    l32i    a15, a1, 24         # 2. Read value in address [a1 + 24] to a15
+    addi    a1,  a1, 32         # 3. a1 = a1 + 32
+    ret                         # 4. Return
+```
 
-Explain memw
-When needed? Why?
+1. Resets stack pointer by restoring *a1* to the base of the current frame recorded in
+*a15*. If the stack pointer moved dynamically inside the function body (e.g., temporary
+allocations), this resets *a1* back to the exact frame boundary allocated during prologue.
 
-What is ill?
-40100045:	000000        	ill
+2. Restore return address by loading caller's return address from stack offset 28 back into
+*a0*. This ensures the upcoming *ret* instruction knows where to jump in the caller's code.
 
+3. Restore caller's frame pointer by loading the caller's original frame pointer from stack
+offset 24 back into *a15*, maintaining ABI compliance so the caller's own variable
+references remain intact.
+
+4. Release reserved stack space by adding 32 back to *a1* (moving the stack pointer back up
+to where the caller left it).
+
+5. Return execution to caller by executing the Xtensa return instruction (*ret* or *ret.n*),
+which performs an unconditional jump to the address currently held in register *a0*.
+
+
+## memw & ill
+**ill** stands for *Illegal Instruction* (0x000000) and it's a hardware-guaranteed invalid 
+instruction opcode in the Xtensa Instruction Set Architecture (ISA). Compilers (*gcc*) and
+assemblers (*as*) insert *ill* at the end of functions or section boundaries as alignment
+padding or safety traps. If a function fails to return properly (e.g., stack corruption or
+falling off the end of a function missing a *ret*), the execution flow hits *ill* and halts
+the system safely via an *IllegalInstructionCause* exception (exception cause code *0*)
+rather than silently executing garbage and corrupting memory.
+
+**memw** stands for *Memory Wait* (0x0020C0) and it's a hardware memory barrier (fence)
+instruction used in the Xtensa ISA to enforce strict ordering of data accesses across the
+bus. Its execution pauses pipeline execution until all pending load/store transactions
+prior to *memw* have physically been completed on the bus. Without *memw*, a hardware
+memory write followed immediately by read or state check might execute out of order at the
+bus level. Placing *memw* guarantees that writes hit RAM or MMIO peripheral registers
+before subsequent loads take place.
