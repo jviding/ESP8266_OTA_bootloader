@@ -66,6 +66,7 @@ wait:
     l32i    a15, a1, 24                 # Restore caller's frame pointer
     addi    a1,  a1, 32                 # Release reserved stack space
     ret                                 # Return to caller
+    ill                                 # Safety trap
 
 
 # ==============================
