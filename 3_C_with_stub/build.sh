@@ -1,22 +1,24 @@
 #!/bin/bash
 
-# Set xtensa path
-PATH_xtensa="/home/jasu/.arduino15/packages/esp8266/tools"
+echo "Build & Deploy"
+
+echo "[1/5] Compile object files"
+xtensa-lx106-elf-as -c stub.s -o stub.o
+xtensa-lx106-elf-gcc -c app.c -o app.o
 
 
-xtensa_lx106_elf_gcc="$PATH_xtensa/xtensa-lx106-elf-gcc/3.1.0-gcc10.3-e5f9fec/bin/xtensa-lx106-elf-gcc"
+echo "[2/5] Link into a minimal ELF"
+xtensa-lx106-elf-ld -T app.ld stub.o app.o -o app.elf
 
 
-echo "Building..."
 
-echo "[1/3] Compile object files"
-"$xtensa_lx106_elf_gcc" -c stub.S -o stub.o
-"$xtensa_lx106_elf_gcc" -c app.c -o app.o
+echo "[3/5] Convert ELF to ESP8266 flashable image"
+esptool.py elf2image app.elf
 
-echo "[2/3] Compile simple elf"
-"$xtensa_lx106_elf_gcc" -nostdlib -Wl,-T,app.ld -Wl,-e,call_user_start stub.o app.o -o app.elf
+echo "[4/5] Flash the image to ESP8266"
+esptool.py --port /dev/ttyUSB0 --baud 115200 write_flash 0x00000 app.elf-0x00000.bin
 
-echo "[3/3] Clean up"
-rm stub.o app.o
+echo "[5/5] Clean up"
+rm stub.o app.o app.elf-0x00000.bin
 
-echo "Build completed."
+echo "Done."
