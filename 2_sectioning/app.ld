@@ -23,8 +23,6 @@ SECTIONS
     *(.rodata.*)
   } >drom0_0_seg :drom0_0_phdr
   
-  /* >irom0_0_seg :irom0_0_phdr */
-
 
   /* ========================================== */
   /* Output section for 32-bit literals in IRAM */
