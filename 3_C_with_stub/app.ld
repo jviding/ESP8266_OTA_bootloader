@@ -23,7 +23,7 @@ SECTIONS
 
   .bss : ALIGN(4)
   {
-    _bss_start = .;
+    _bss_start = .;   /* Symbol assignment to get a memory address pointer */
     *(.bss)
     *(.bss.*)
     *(COMMON)         /* GCC emits uninitialized global C variables by default as common. */
