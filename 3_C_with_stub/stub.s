@@ -1,20 +1,52 @@
+# =========================
+# *** CONSTANTS IN DRAM ***
+# =========================
+    .section .rodata, "a"
+    .align 4
+
+.L_DELAY_COUNT:           .word   0x0007A120    # 500.000
+.L_GPIO_ENABLE:           .word   0x60000310
+.L_GPIO_OUT_SET:          .word   0x60000304
+.L_GPIO_OUT_CLEAR:        .word   0x60000308
+
+
+# ==============================
+# *** void call_user_start() ***
+# ==============================
+    .section .literal
+    .align 4
+
+.L_GPIO_ENABLE_ADDR:      .word   .L_GPIO_ENABLE
+.L_GPIO_OUT_SET_ADDR:     .word   .L_GPIO_OUT_SET
+.L_GPIO_OUT_CLEAR_ADDR:   .word   .L_GPIO_OUT_CLEAR
+
     .text
     .align 4
     .global call_user_start
     .type   call_user_start, @function
+
 call_user_start:
-    .extern user_main
-    call0 user_main
+    l32r a3, .L_GPIO_ENABLE_ADDR
+    l32i a2, a3, 0                      # a2 = *gpio_enable_reg
+    movi a3, 4                          # a3 = gpio_num
+    call0 gpio_enable                   # gpio_enable(*gpio_enable_reg, gpio_num)  
+
+.L_loop:
+    l32r a3, .L_GPIO_OUT_CLEAR_ADDR
+    l32i a2, a3, 0                      # a2 = *gpio_set_reg
+    call0 set_gpio_low                  # set_gpio_high(*gpio_set_reg)
+
+    call0 wait                          # wait()
+    
+    l32r a3, .L_GPIO_OUT_SET_ADDR
+    l32i a2, a3, 0                      # a2 = *gpio_clear_reg
+    call0 set_gpio_high                 # set_gpio_low(*gpio_clear_reg)
+    
+    call0 wait                          # wait()
+    j .L_loop
 
 
 
-
-#.section .text, "ax"
-
-#    .align 4
-#    .global call_user_start
-#    .type   call_user_start, @function
-#call_user_start:
 
     # Clear BSS section
     # Zero out uninitialized global and static C variables.
@@ -28,16 +60,3 @@ call_user_start:
     #addi a3, a3, 4           # Increment pointer by 4 bytes (1 word)
     #j .Lbss_loop
 #.Lbss_done:
-
-    # Transfer control to C entry point (user_main)
- #   .extern user_main
- #   movi a2, user_main
-
-    # Jump register (jx) for a clean, non-returning transfer
-    # to avoid conflicts with the C function's prologue.    
-    #jx a2            
-#    call0 user_main
-
-    # Unreachable loop, user_main contains the main program loop.
-#loop:
-#    j loop
