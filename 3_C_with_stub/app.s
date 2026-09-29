@@ -4,7 +4,6 @@
     .section .rodata, "a"
     .align 4
 
-.L_DELAY_COUNT:           .word   0x0007A120    # 500.000
 .L_GPIO_ENABLE:           .word   0x60000310
 .L_GPIO_OUT_SET:          .word   0x60000304
 .L_GPIO_OUT_CLEAR:        .word   0x60000308
