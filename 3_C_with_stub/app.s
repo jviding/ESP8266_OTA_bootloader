@@ -26,12 +26,23 @@
     .type   call_user_start, @function
 
 call_user_start:
+    # --- Clear BSS section ---
+    movi a2, _bss_start                 # Current BSS pointer
+    movi a3, _bss_end                   # BSS end
+    movi a4, 0                          # Value to write (zero)
+.Lbss_loop:
+    bgeu a2, a3, .Lbss_done             # If current ptr >= end ptr, BSS done
+    s32i a4, a2, 0                      # Write 0 to current address
+    addi a2, a2, 4                      # Increment pointer by 4 bytes (1 word)
+    j .Lbss_loop
+.Lbss_done:
+
     l32r a3, .L_GPIO_ENABLE_ADDR
     l32i a2, a3, 0                      # a2 = *gpio_enable_reg
     movi a3, 4                          # a3 = gpio_num
     call0 gpio_enable                   # gpio_enable(*gpio_enable_reg, gpio_num)  
 
-.L_loop:
+.Lloop:
     l32r a3, .L_GPIO_OUT_CLEAR_ADDR
     l32i a2, a3, 0                      # a2 = *gpio_clear_reg
     call0 set_gpio_low                  # set_gpio_low(*gpio_clear_reg)
@@ -43,7 +54,7 @@ call_user_start:
     call0 set_gpio_high                 # set_gpio_high(*gpio_set_reg)
     
     call0 wait                          # wait()
-    j .L_loop
+    j .Lloop
 
 
 

@@ -9,8 +9,11 @@ void wait() {
 }
 
 void gpio_enable(volatile uint32_t *gpio_enable_reg, uint32_t gpio_num) {
-    GPIO_MASK = (1 << gpio_num);
-    *gpio_enable_reg |= GPIO_MASK;
+    // Verify BSS was correctly cleared by our stub
+    if (GPIO_MASK == 0) {
+        GPIO_MASK = (1 << gpio_num);
+        *gpio_enable_reg |= GPIO_MASK;
+    }
 }
 
 void set_gpio_high(volatile uint32_t *gpio_set_reg) {
