@@ -33,14 +33,14 @@ call_user_start:
 
 .L_loop:
     l32r a3, .L_GPIO_OUT_CLEAR_ADDR
-    l32i a2, a3, 0                      # a2 = *gpio_set_reg
-    call0 set_gpio_low                  # set_gpio_high(*gpio_set_reg)
+    l32i a2, a3, 0                      # a2 = *gpio_clear_reg
+    call0 set_gpio_low                  # set_gpio_low(*gpio_clear_reg)
 
     call0 wait                          # wait()
     
     l32r a3, .L_GPIO_OUT_SET_ADDR
-    l32i a2, a3, 0                      # a2 = *gpio_clear_reg
-    call0 set_gpio_high                 # set_gpio_low(*gpio_clear_reg)
+    l32i a2, a3, 0                      # a2 = *gpio_set_reg
+    call0 set_gpio_high                 # set_gpio_high(*gpio_set_reg)
     
     call0 wait                          # wait()
     j .L_loop
