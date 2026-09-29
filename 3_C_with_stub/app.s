@@ -43,11 +43,13 @@ call_user_start:
     ill                                 # Illegal opcode: CPU traps here if check failed
 .L_continue:
 
+    # --- GPIO enable ---
     l32r a3, .L_GPIO_ENABLE_ADDR
     l32i a2, a3, 0                      # a2 = *gpio_enable_reg
     movi a3, 4                          # a3 = gpio_num
     call0 gpio_enable                   # gpio_enable(*gpio_enable_reg, gpio_num)  
 
+    # --- LED blink ---
 .L_loop:
     l32r a3, .L_GPIO_OUT_CLEAR_ADDR
     l32i a2, a3, 0                      # a2 = *gpio_clear_reg
