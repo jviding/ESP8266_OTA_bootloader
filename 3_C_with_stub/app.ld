@@ -35,17 +35,5 @@ SECTIONS
     *(.literal.*)
     *(.text)
     *(.text.*)
-  } >iram1_0_seg :iram1_0_phdr
-
-
-
-  /*.bss ALIGN(8) (NOLOAD) : ALIGN(4)
-  {
-    _bss_start = ABSOLUTE(.);
-    *(.bss)
-    *(.bss.*)
-    _bss_end = ABSOLUTE(.);
-  } >dram0_0_seg :dram0_0_bss_phdr*/
-
-  
+  } >iram1_0_seg :iram1_0_phdr  
 }
