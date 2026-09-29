@@ -26,6 +26,8 @@ SECTIONS
     _bss_start = .;
     *(.bss)
     *(.bss.*)
+    *(COMMON)         /* GCC emits uninitialized global C variables by default as common. */
+    . = ALIGN(4);     /* Pad the end of BSS to a full 4-byte boundary */
     _bss_end = .;
   } >dram0_0_seg :dram0_0_bss_phdr
 
