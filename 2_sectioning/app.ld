@@ -4,17 +4,12 @@ MEMORY
 {
   iram1_0_seg :   org = 0x40100000, len = 0x8000   /* 32 KB IRAM                    */
   drom0_0_seg :   org = 0x3FFE8000, len = 0x100000 /* 1 MB Flash mapped to Data Bus */
-
-  /* irom0_0_seg :   org = 0x40200000, len = 0xec000  */
-  /* ~1 MB Mapped Flash */
 }
 
 PHDRS
 {
   iram1_0_phdr PT_LOAD;
   drom0_0_phdr PT_LOAD;
-
-  /* irom0_0_phdr PT_LOAD; */
 }
 
 SECTIONS
