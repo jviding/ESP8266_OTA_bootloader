@@ -16,6 +16,6 @@ echo "[4/5] Flash the image to ESP8266"
 esptool.py --port /dev/ttyUSB0 --baud 115200 write_flash 0x00000 app.elf-0x00000.bin
 
 echo "[5/5] Clean up"
-rm stub.o app.o app.elf app.elf-0x00000.bin
+rm app.o gpio.o app.elf app.elf-0x00000.bin
 
 echo "Done."
