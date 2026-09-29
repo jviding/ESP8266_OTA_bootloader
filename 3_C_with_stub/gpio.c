@@ -1,6 +1,10 @@
 #include <stdint.h>
 
-uint32_t GPIO_MASK;
+volatile uint32_t GPIO_MASK;        // Volatile to force l32i
+
+uint32_t bss_check(void) {
+    return GPIO_MASK == 0 ? 1 : 0;  // Verify BSS was cleared
+}
 
 void wait() {
     for (volatile uint32_t i = 0; i < 500000; ++i) {
@@ -9,12 +13,8 @@ void wait() {
 }
 
 void gpio_enable(volatile uint32_t *gpio_enable_reg, uint32_t gpio_num) {
-    // Verify BSS was correctly cleared by our asm script
-    // If not, prevent LED from blinking
-    if (GPIO_MASK == 0) {
-        GPIO_MASK = (1 << gpio_num);
-        *gpio_enable_reg |= GPIO_MASK;
-    }
+    GPIO_MASK = (1 << gpio_num);
+    *gpio_enable_reg |= GPIO_MASK;
 }
 
 void set_gpio_high(volatile uint32_t *gpio_set_reg) {
