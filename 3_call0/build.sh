@@ -3,7 +3,7 @@
 echo "Build & Deploy"
 
 echo "[1/5] Compile object files"
-xtensa-lx106-elf-as -c app.s -o app.o
+xtensa-lx106-elf-as app.s -o app.o
 xtensa-lx106-elf-gcc -c gpio.c -o gpio.o
 
 echo "[2/5] Link into a minimal ELF"
