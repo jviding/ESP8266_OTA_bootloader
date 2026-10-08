@@ -11,7 +11,7 @@
 * Bare-metal SPI is not well covered by the official ESP8266 technical documentation.
 */
 typedef int (*rom_spi_read_fn)(uint32_t flash_addr, uint32_t *buf, uint32_t size);
-#define SPIRead     ((rom_spi_read_fn)0x40004B1C)
+#define SPIRead ((rom_spi_read_fn)0x40004B1C)
 
 /* ---------------------
 *  BARE-METAL FLASH READ
