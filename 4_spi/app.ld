@@ -27,8 +27,8 @@ SECTIONS
   /* =================== */
   .irom0.text : ALIGN(4)
   {
-    LONG(_irom0_text_end - _irom0_text_start);    /* Emit a 32-bit word containing section byte size */
     _irom0_text_start = .;                        /* Mark absolute start of this section in Flash */
+    LONG(_irom0_text_end - _irom0_text_start);    /* Emit a 32-bit word containing section byte size */
     *(.irom0.literal .irom0.literal.*)
     *(.irom0.text .irom0.text.*)
     . = ALIGN(4);
@@ -44,3 +44,8 @@ SECTIONS
     *(.text .text.*)
   } >iram1_0_seg :iram1_0_phdr
 }
+
+/* ======================= */
+/* SPIRead symbol address */
+/* ======================= */
+PROVIDE ( SPIRead = 0x40004b1c );
