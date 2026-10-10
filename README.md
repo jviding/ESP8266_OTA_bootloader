@@ -20,6 +20,7 @@ using linker scripts.
 Explore C and assembly interoperation, parameter passing, and register preservation under the
 Xtensa Call0 ABI rules.
 
-## 4. TBD
+## 4. SPI
+Call built-in ROM function (*SPIRead*) to fetch payloads from Flash and execute in IRAM.
 
 
