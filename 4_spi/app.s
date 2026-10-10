@@ -102,14 +102,12 @@ call_user_start:
     call0 gpio_set_low            # gpio_set_low(a2, a3)
 
     callx0 a12                    # wait()
-    #call0 wait                    # wait()
 
     l32r a2, .L_GPIO_OUT_SET      # a2 = Gpio set address
     movi a3, 4                    # a3 = pin 4
     call0 gpio_set_high           # gpio_set_high(a2, a3)
     
     callx0 a12                    # wait()
-    #call0 wait                    # wait()
     j .L_loop
 
 .L_halt:
