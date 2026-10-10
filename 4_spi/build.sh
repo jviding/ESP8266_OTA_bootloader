@@ -3,9 +3,16 @@
 echo "Build & Deploy"
 
 echo "[1/5] Compile object files"
+#
+# -mlongcalls : Forces the compiler to emit l32r + callx0 sequences for all 
+#               function calls, preventing out-of-range relocation errors 
+#               when linking against far-away symbols in ROM or Flash. 
+#
+#               See spi.c for more details.
+#
 xtensa-lx106-elf-as app.s -o app.o
 xtensa-lx106-elf-gcc -c gpio.c -o gpio.o
-xtensa-lx106-elf-gcc -c spi.c -o spi.o
+xtensa-lx106-elf-gcc -mlongcalls -c spi.c -o spi.o
 xtensa-lx106-elf-gcc -c wait.c -o wait.o
 
 echo "[2/5] Link into a minimal ELF"
