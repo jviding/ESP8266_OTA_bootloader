@@ -122,10 +122,11 @@ imposing strict rules on where code can be executed and where data can be writte
 
 User-Accessible Memory Regions:
 
-|Memory Region |Virtual Address Range   |Size  |Bus & Access Rules
-|DRAM (dram0)  |0x3FFE8000 - 0x3FFFC000 |80 KB |Data Bus (R/W)
-|IRAM (iram1)  |0x40100000 - 0x40108000 |32 KB |Instruction Bus (R/W/X)
-|IROM (irom0)  |0x40200000 - 0x40300000 |1 MB  |CPU MMU Window (Read-Only)
+|Memory Region |Virtual Address Range   |Size  |Bus & Access Rules        |
+|--------------|------------------------|------|--------------------------|
+|DRAM (dram0)  |0x3FFE8000 - 0x3FFFC000 |80 KB |Data Bus (R/W)            |
+|IRAM (iram1)  |0x40100000 - 0x40108000 |32 KB |Instruction Bus (R/W/X)   |
+|IROM (irom0)  |0x40200000 - 0x40300000 |1 MB  |CPU MMU Window (Read-Only)|
 
 Reserved & System Regions:
 
