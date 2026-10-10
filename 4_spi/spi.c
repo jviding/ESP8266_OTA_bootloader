@@ -7,11 +7,16 @@
 * (0x40000000 address range). Performs a raw hardware SPI transaction to read
 * bytes from physical Flash chip offsets directly into RAM.
 *
-* The address was discovered from the official ESP8266_RTOS_SDK linker script.
-* Bare-metal SPI is not well covered by the official ESP8266 technical documentation.
+* The SPIRead symbol address (0x40004b1c) is provided by our linker script.
+*
+* A direct 'call0' instruction on Xtensa LX106 has a PC-relative reach of 512 KB.
+* Because the distance between IRAM (0x40100000) and Boot ROM (0x40004B1C) is ~1 MB,
+* we compile in build.sh with the `-mlongcalls` compiler flag. This forces GCC to 
+* emit an `l32r` + `callx0` instruction sequence, allowing an indirect call across 
+* the full 32-bit address space and preventing a relocation error.
 */
-typedef int (*rom_spi_read_fn)(uint32_t flash_addr, uint32_t *buf, uint32_t size);
-#define SPIRead ((rom_spi_read_fn)0x40004B1C)
+extern int SPIRead(uint32_t flash_addr, uint32_t *buf, uint32_t size);
+
 
 /* ---------------------
 *  BARE-METAL FLASH READ
