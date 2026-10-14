@@ -136,15 +136,15 @@ and process the LOAD segments (IRAM, DRAM).
 
 4. Configure MMU and prepare for hand-off.
 ```
-1. Disable cache:
+A. Disable cache:
  - Stop cache controller
  - Wait for SPI reads finish
  - Detach AHB bus
 
-2. Configure cache:
+B. Configure cache:
  - Cache_Read_Enable(0, 0, 0); // Args: sub_region, region, cache_size
 
-3. Re-enable cache:
+C. Re-enable cache:
  - Reconnect AHB bus
  - Re-enable cache controller
 ```
