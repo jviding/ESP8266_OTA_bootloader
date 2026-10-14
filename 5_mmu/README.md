@@ -44,22 +44,18 @@ speed (80 or 160 MHz), execution relies on a fast, on-chip 16 KB or 32 KB Instru
                               [ SRAM Cache ]     [ SPI Controller Engine ]
 ```
 
-\1. The cache memory is divided into 32-byte lines.
-
-\2. Each line is tracked by an entry in Tag RAM, containing a Valid Bit (a boolean indicating 
+1. The cache memory is divided into 32-byte lines.
+2. Each line is tracked by an entry in Tag RAM, containing a Valid Bit (a boolean indicating 
     whether the cache line holds valid data) and an Address Tag.
 
 **Why the 1 MB Window Exists in Silicon**
 
 The 1 MB virtual execution window is not an arbitrary software limit; it is a physical hardware
 constraint driven by manifacturing cost:
-
-\- To support a virtual execution window larger than 1 MB simultaneously, every single entry in
-   the Tag RAM array would require wider address bits.
-
-\- The hardware would need wider silicon comparators on every instruction fetch cycle.
-
-\- Restricting the window to 1 MB minimized Tag SRAM and logic gate count, keeps the ESP8266 
+- To support a virtual execution window larger than 1 MB simultaneously, every single entry in
+  the Tag RAM array would require wider address bits.
+- The hardware would need wider silicon comparators on every instruction fetch cycle.
+- Restricting the window to 1 MB minimized Tag SRAM and logic gate count, keeps the ESP8266 
    silicon die size ultra-small and cheap to manufacture for sub-$1 IoT boards.
 
 
