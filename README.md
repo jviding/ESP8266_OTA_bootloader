@@ -23,4 +23,5 @@ Xtensa Call0 ABI rules.
 ## 4. SPI
 Call built-in ROM function (*SPIRead*) to fetch payloads from Flash and execute in IRAM.
 
-
+## 5. MMU
+Call built-in ROM functions to enable hardware cache and execute directly from SPI Flash.
