@@ -101,13 +101,12 @@ Physical Flash Address = Virtual Address - Virtual Base + Flash Offset
 
 **Cache Size Trade-Offs**
 
-\- 16 KB Mode (*SOC_CACHE_SIZE = 0*) - Preferred - Gives 16 KB more RAM. The unused half
-   of the 32 KB SRAM block is reclaimed and converted into usable Data RAM (*0x3FFE8000* -
-   *0x3FFEFFFF*), boosting DRAM from 64 KB to 80 KB.
-
-\- 32 KB Mode (*SOC_CACHE_SIZE = 1*) - Used only for large, loop-heavy applications with
-   massive code footprints where execution speed inside Flash is heavily bottlenecked by
-   cache misses, and where data memory fits comfortably under 64 KB.
+- 16 KB Mode (*SOC_CACHE_SIZE = 0*) - Preferred - Gives 16 KB more RAM. The unused half
+  of the 32 KB SRAM block is reclaimed and converted into usable Data RAM (*0x3FFE8000* -
+  *0x3FFEFFFF*), boosting DRAM from 64 KB to 80 KB.
+- 32 KB Mode (*SOC_CACHE_SIZE = 1*) - Used only for large, loop-heavy applications with
+  massive code footprints where execution speed inside Flash is heavily bottlenecked by
+  cache misses, and where data memory fits comfortably under 64 KB.
 
 
 ## Bootloader & Pipeline Sequence
