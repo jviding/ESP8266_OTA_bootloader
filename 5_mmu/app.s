@@ -4,7 +4,6 @@
     .section .literal
     .align 4
 
-.L_OFFSET:                          .word   0x00010000
 .L_GPIO_ENABLE_FUNC:                .word   gpio_enable
 .L_GPIO_SET_FUNC:                   .word   gpio_set_high
 .L_GPIO_CLEAR_FUNC:                 .word   gpio_set_low
@@ -20,7 +19,6 @@ call_user_start:
     rsil a2, 3                      # Raise level to 3
 
     # --- MMU Cache Enable ---
-    l32r a2, .L_OFFSET              # Set 2nd binary physical offset
     call0 init_mmu_and_cache        # Enable MMU
 
     # --- Re-enable interrupts ---
